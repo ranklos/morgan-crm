@@ -184,13 +184,11 @@ export default function App(){
   const sLeads=isAdmin?(fv?leads.filter(l=>l.responsable===fv):leads):leads.filter(l=>l.responsable===user.id);
   const sProsp=isAdmin?(fv?prospectos.filter(p=>p.responsable===fv):prospectos):prospectos.filter(p=>p.responsable===user.id);
 
-  // my reminders — across all my prospectos
+  // my reminders — direct calculation, no useMemo
   const userId=user.id;
-  const myReminders=useMemo(()=>{
-    const uid=isAdmin&&fv?fv:userId;
-    const myP=prospectos.filter(p=>isAdmin?(!fv||p.responsable===fv):p.responsable===userId);
-    return myP.flatMap(p=>(p.recordatorios||[]).filter(r=>!r.completado&&(!isAdmin||r.userId===uid)).map(r=>({...r,empresa:p.empresa,prospectoId:p.id})));
-  },[prospectos,userId,isAdmin,fv]);
+  const uid=isAdmin&&fv?fv:userId;
+  const myReminderProsp=isAdmin?(!fv?prospectos:prospectos.filter(p=>p.responsable===fv)):prospectos.filter(p=>p.responsable===userId);
+  const myReminders=myReminderProsp.flatMap(p=>(p.recordatorios||[]).filter(r=>!r.completado&&(!isAdmin||r.userId===uid)).map(r=>({...r,empresa:p.empresa,prospectoId:p.id})));
 
   const om=(t,d=null)=>{setModal(t);setMdata(d);};
   const cm=()=>{setModal(null);setMdata(null);};
