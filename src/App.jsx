@@ -185,11 +185,12 @@ export default function App(){
   const sProsp=isAdmin?(fv?prospectos.filter(p=>p.responsable===fv):prospectos):prospectos.filter(p=>p.responsable===user.id);
 
   // my reminders — across all my prospectos
+  const userId=user.id;
   const myReminders=useMemo(()=>{
-    const uid=isAdmin&&fv?fv:user.id;
-    const myP=prospectos.filter(p=>isAdmin?(!fv||p.responsable===fv):p.responsable===user.id);
+    const uid=isAdmin&&fv?fv:userId;
+    const myP=prospectos.filter(p=>isAdmin?(!fv||p.responsable===fv):p.responsable===userId);
     return myP.flatMap(p=>(p.recordatorios||[]).filter(r=>!r.completado&&(!isAdmin||r.userId===uid)).map(r=>({...r,empresa:p.empresa,prospectoId:p.id})));
-  },[prospectos,user,isAdmin,fv]);
+  },[prospectos,userId,isAdmin,fv]);
 
   const om=(t,d=null)=>{setModal(t);setMdata(d);};
   const cm=()=>{setModal(null);setMdata(null);};
